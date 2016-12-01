@@ -1,6 +1,6 @@
 {
   "name": "ssi-compile-webpack-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "compile ssi webpack plugin",
   "main": "index.js",
   "scripts": {
@@ -25,10 +25,10 @@
     "glob": "^7.1.1",
     "html-loader": "^0.4.4",
     "html-webpack-plugin": "^2.24.1",
-    "request": "^2.79.0",
     "webpack": "^1.13.3"
   },
   "dependencies": {
-    "html-minifier": "^3.2.3"
+    "html-minifier": "^3.2.3",
+    "request": "^2.79.0"
   }
 }
