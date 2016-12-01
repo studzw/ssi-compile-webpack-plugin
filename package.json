@@ -1,6 +1,6 @@
 {
   "name": "ssi-compile-webpack-plugin",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "compile ssi webpack plugin",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "ssi",
     "plugin"
   ],
-  "author": "zhangwu",
+  "author": "studzw",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/studzw/ssi-compile-webpack-plugin/issues"
