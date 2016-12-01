@@ -1,0 +1,134 @@
+# eslint默认配置
+# extends: "eslint:recommended"
+
+env:
+  es6: true
+  browser: true
+  node: true
+  mocha: true
+
+ecmaFeatures:
+  modules: true
+  defaultParams: true
+  experimentalObjectRestSpread: true
+
+globals:
+	document: true
+	navigator: true
+	window: true
+
+parser: "babel-eslint"
+
+parserOptions:
+  sourceType: "module"
+  allowImportExportEverywhere: false
+
+rules:
+  
+  # 禁止使用var申明变量，请使用let和const
+  no-var: 2
+
+  # 箭头函数中的箭头前后需要留空格
+  arrow-spacing: [2, { "before": true, "after": true }]
+
+  # 在定义对象或数组时，最后一项不能加逗号
+  comma-dangle: [2, "never"]
+
+  # 注释 `//` `/**/` 后面跟一个空格
+  spaced-comment: 2
+
+  # 把逗号放在行尾
+  comma-style: [2, "last"]
+
+  # 在constructor函数中，如果classes是继承其他class，那么请使用super。否者不使用super
+  constructor-super: 2
+
+  # 在if-else语句中，如果if或else语句都必须加大括号
+  curly: [2, "all"]
+
+  # 必须使用恒(不)等 `===` `!==`
+  eqeqeq: 2
+  no-eq-null: 2
+
+  # 缩进4个空格(可在编辑器中配置一个tab是4个空格),switch中的case也需要这样
+  indent: [2, 4, { "SwitchCase": 1 }]
+
+  # 对象字面量语法中，key和value之间的空白，冒号前不要空格，冒号后面需要一个空格
+  key-spacing: [2, { "beforeColon": false, "afterColon": true }]
+
+  # 构造函数首字母大写
+  new-cap: [2, { "newIsCap": true, "capIsNew": false }]
+
+  # 禁止使用arguments.caller和arguments.callee
+  no-caller: 2
+
+  # 在条件语句中不要使用赋值语句
+  no-cond-assign: 2
+
+  # 禁止使用eval函数
+  no-eval: 2
+
+  # 禁止使用with语句
+  no-with: 2
+
+  # 禁止出现空的代码块
+  no-empty: 2
+  
+  # 在JS中禁止对数字缩写，如`0.2`不可以写成`.2`
+  no-floating-decimal: 2
+
+  # 不要使用八进制的语法
+  no-octal: 2
+
+
+  # 禁止使用没有定义的变量，除非`global`已经申明
+  no-undef: 2
+
+  # 禁止把undefined赋值给一个变量
+  no-undef-init: 2
+
+  # 没有执行不到的代码
+  no-unreachable: 2
+
+  # 没有定义了没有被使用到的变量
+  # no-unused-vars: [2, { "vars": "all", "args": "none" }]
+
+  # 在使用parseInt() 方法时，需要传递第二个参数
+  radix: 2
+
+  # 操作符前后需要加空格
+  space-infix-ops: 2
+
+  # 使用isNaN方法，而不要直接和NaN作比较
+  use-isnan: 2
+
+  # 确保变量和函数 先声明后使用
+  no-inner-declarations: [2, "both"]
+
+
+
+  ####################
+
+  # 确保所有的switch语句都有一个default分支
+  # default-case: 2
+  
+  # 如果else语句中只含有一个return语句，那么完全可以不适用else语句，直接return 
+  # no-else-return: 2
+
+  # 禁止出现多余的分号
+  #no-extra-semi: 2
+
+  # 不要把空格和tab混用
+  # no-mixed-spaces-and-tabs: 2
+
+  # 禁止对一些关键字或者保留字进行赋值操作，比如NaN、Infinity、undefined、eval、arguments等。
+  # no-shadow-restricted-names: 2
+
+  # 使用单引号
+  # quotes: [2, "single", "avoid-escape"]
+
+  # 禁止定义稀疏数组
+  # no-sparse-arrays: 2
+
+  # 禁止在不需要分行的时候使用了分行
+  # no-unexpected-multiline: 2
