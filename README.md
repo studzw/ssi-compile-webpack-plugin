@@ -44,7 +44,7 @@ module.exports = {
 
 | *key* | *value* | *说明* |
 | :---------  | :--------- | :------------------- |
-| publicPath | String | 资源基础路径,为空时不处理路径，不为空的时将路径拼接为`${publicPath}/${path.basename}`, 默认 '' |
+| publicPath | String | 资源基础路径,为空时不处理路径，不为空的时将路径拼接为`${publicPath}/${path.basename}`, 默认 '' |
 | localBaseDir | String | si本地路径的基础路径, 默认 '/' |
 | minify | Boolean | 是否压缩html, 默认 false |
 | ext | String | 需要处理的文件后缀,多后缀名使用`|`分割，如 `.html|.shtml` 默认 .html |
