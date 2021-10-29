@@ -46,6 +46,6 @@ module.exports = {
 | Name | Type | Default | Description |
 | :---------  | :--------- | :--------- | :------------------- |
 | publicPath | String | '' | Resource base path. If it is empty, the path will not be processed. If it is not empty, the path will be spliced into `${publicPath}/${path.basename}`|
-| localBaseDir | String | '/' | The base path of the si local path |
+| localBaseDir | String | '/' | The base path of the SSI local path |
 | minify | Boolean | false | Whether or not to compress HTML |
 | ext | String | '.html' | File suffix to be processed. Use '\|' to separate multiple suffixes, such as '.html\|.shtml' |
