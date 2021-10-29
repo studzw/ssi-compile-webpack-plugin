@@ -4,7 +4,7 @@
   "description": "compile ssi webpack plugin",
   "main": "index.js",
   "scripts": {
-    "test": "webpack -d --config ./test/webpack.config.js"
+    "test": "rm -rf ./test/release && NODE_ENV=production webpack --config ./test/webpack.config.js"
   },
   "repository": {
     "type": "git",
@@ -23,9 +23,10 @@
   "homepage": "https://github.com/studzw/ssi-compile-webpack-plugin#readme",
   "devDependencies": {
     "glob": "^7.1.1",
-    "html-loader": "^0.4.4",
-    "html-webpack-plugin": "^2.24.1",
-    "webpack": "^1.13.3"
+    "html-loader": "^3.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.61.0",
+    "webpack-cli": "^4.9.1"
   },
   "dependencies": {
     "html-minifier": "^3.2.3",
