@@ -42,11 +42,12 @@ class SSICompileWebpackplugin{
         const { webpack } = compiler;
         const { Compilation, sources: { RawSource } } = webpack;
 
-        compiler.hooks.emit.tap(pluginName, (compilation) => {
+        compiler.hooks.emit.tapAsync(pluginName, (compilation, callback) => {
             const htmlArray = this.addFileToWebpackAsset(compilation);
             const contents = htmlArray.map((filename) => this.replaceSSIFile(compilation, filename))
 
-            return Promise.all(contents)
+            Promise.all(contents)
+                .then(() => callback())
         })
     }
 
@@ -64,9 +65,9 @@ class SSICompileWebpackplugin{
             return getSource(src, this.userOptions)
         }))
             .then((results) => {
-                includeTags.forEach((i, j) => {
-                    source = source.replace(i, (matchItem) => (
-                        decodeURIComponent(matchItem = encodeURIComponent(results[j]))
+                includeTags.forEach((tag, index) => {
+                    source = source.replace(tag, (matchItem) => (
+                        decodeURIComponent(matchItem = encodeURIComponent(results[index]))
                     ))
                 })
 
