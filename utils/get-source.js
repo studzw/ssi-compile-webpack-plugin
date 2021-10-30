@@ -39,8 +39,8 @@ async function getSource(dir, setting){
   } else {
     return new Promise((resolve, reject) => {
       try{
-        const absoultPath = path.normalize(context ? path.join(context, dir) : dir)
-        const body = fs.readFileSync(absoultPath).toString()
+        const absolutePath = path.normalize(context ? path.join(context, dir) : dir)
+        const body = fs.readFileSync(absolutePath).toString()
         resolve(body)
       }catch(e){
         reject(e)
