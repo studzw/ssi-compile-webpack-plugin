@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "html-minifier": "^3.2.3",
+    "node-fetch": "^2.6.5",
     "request": "^2.79.0"
   }
 }
