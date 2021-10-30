@@ -5,11 +5,11 @@ const path = require('path')
 const fetch = require('node-fetch')
 
 function checkStatus(res) {
-    if (res.ok) { // res.status >= 200 && res.status < 300
-        return res;
-    } else {
-        throw new Error(res.statusText);
-    }
+  if (res.ok) { // res.status >= 200 && res.status < 300
+    return res;
+  } else {
+    throw new Error(res.statusText);
+  }
 }
 
 /**
@@ -21,32 +21,32 @@ function checkStatus(res) {
  */
 
 async function getSource(dir, setting){
-    const isRemotePath = /https?\:\/\//g.test(dir)
-    const context = setting.localBaseDir
-    const publicPath = setting.publicPath.trim()
+  const isRemotePath = /https?\:\/\//g.test(dir)
+  const context = setting.localBaseDir
+  const publicPath = setting.publicPath.trim()
 
-    if(publicPath !== ''){
-        return Promise.resolve(`<!--#include file="${publicPath}/${path.basename(dir)}"-->`)
-    }
+  if(publicPath !== ''){
+    return Promise.resolve(`<!--#include file="${publicPath}/${path.basename(dir)}"-->`)
+  }
 
-    if(isRemotePath){
-        return fetch(dir, {
-            compress: true,
-            timeout: 5000,
-        })
-            .then(checkStatus)
-            .then(res => res.text())
-    } else {
-        return new Promise((resolve, reject) => {
-            try{
-                const absoultPath = path.normalize(context ? path.join(context, dir) : dir)
-                const body = fs.readFileSync(absoultPath).toString()
-                resolve(body)
-            }catch(e){
-                reject(e)
-            }
-        })
-    }
+  if(isRemotePath){
+    return fetch(dir, {
+      compress: true,
+      timeout: 5000,
+    })
+      .then(checkStatus)
+      .then(res => res.text())
+  } else {
+    return new Promise((resolve, reject) => {
+      try{
+        const absoultPath = path.normalize(context ? path.join(context, dir) : dir)
+        const body = fs.readFileSync(absoultPath).toString()
+        resolve(body)
+      }catch(e){
+        reject(e)
+      }
+    })
+  }
 }
 
 module.exports = getSource
