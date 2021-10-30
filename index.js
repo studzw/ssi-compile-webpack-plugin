@@ -37,112 +37,52 @@ class SSICompileWebpackplugin{
         }, options)
     }
 
-    // apply(compile, callback){
-
-    //     compile.plugin('emit',  (compilation, callback) => {
-
-    //         const htmlNameArr = this.addFileToWebpackAsset(compilation)
-
-    //         if(htmlNameArr.length === 0){
-    //             return callback()
-    //         }
-
-    //         eachPromise(htmlNameArr.map((item) => {
-    //             return this.replaceSSIFile(compilation, item)
-    //         }))
-    //         .then(() => {
-    //             callback()
-    //         }, () => {
-    //             callback()
-    //         })
-    //         .catch(() => {
-    //             throw new Error('ssi资源替换出错')
-    //         })
-
-
-
-
-    //     })
-
-    // }
-
     apply(compiler) {
         const pluginName = 'SSICompileWebpackPlugin';
         const { webpack } = compiler;
         const { Compilation, sources: { RawSource } } = webpack;
 
         compiler.hooks.emit.tap(pluginName, (compilation) => {
-            // console.log('COMPILATION: ', compilation.assets);
-
             const htmlArray = this.addFileToWebpackAsset(compilation);
+            const contents = htmlArray.map((filename) => this.replaceSSIFile(compilation, filename))
 
-            Promise.all(htmlArray.map((filename) => this.replaceSSIFile(compilation, filename)))
-
-            // const content = Object.entries(compilation.assets)
-            //     .map(([filename, source]) => this.injectFile(filename, source, RawSource, compilation))
-
-            // return Promise.all(content)
-            //     .then((results) => console.log('RESULTS: ', results))
+            return Promise.all(contents)
         })
     }
 
-    replaceSSIFile(compilation, name){
-        const includeFileReg = /<!--#\s*include\s+(file|virtual)=(.*?)-->/g
-        let source = compilation.assets[name].source()
-        const fileArr = source.match(includeFileReg)
+    replaceSSIFile(compilation, filename){
+        const includeTagRegExp = /<!--#\s*include\s+(file|virtual)=(.*?)-->/g
+        let source = compilation.assets[filename].source()
+        const includeTags = source.match(includeTagRegExp)
 
-        if(!fileArr){
-            Promise.resolve(source)
+        if(!includeTags){
+            return Promise.resolve(source)
         }
 
-        return new Promise((resolve, reject) => {
-
-
-            eachPromise(fileArr.map((item) => {
-                const src = item.split('"')[1]
-                return getSource(src, this.setting)
-            }))
-            .then((sucessResult) => {
-
-                fileArr.forEach((i, j) => {
-                    source = source.replace(i, function(matchItem){
-                        return decodeURIComponent(matchItem = encodeURIComponent(sucessResult[j].data))
-                    })
+        return Promise.all(includeTags.map((item) => {
+            const src = item.split('"')[1]
+            return getSource(src, this.userOptions)
+        }))
+            .then((results) => {
+                includeTags.forEach((i, j) => {
+                    source = source.replace(i, (matchItem) => (
+                        decodeURIComponent(matchItem = encodeURIComponent(results[j]))
+                    ))
                 })
 
-                compilation.assets[name].source = () => {
-                    return this.setting.minify ? minify(source, {
+                compilation.assets[filename].source = () => {
+                    return this.userOptions.minify ? minify(source, {
                         collapseWhitespace: true,
                         minifyCSS: true,
                         minifyJS: true
                     }) : source
                 }
 
-                resolve(sucessResult)
-            }, (errResult) => {
-
-                fileArr.forEach((i, j) => {
-                    source = source.replace(i, function(matchItem){
-                        return decodeURIComponent(matchItem = encodeURIComponent(errResult[j].data))
-                    })
-                })
-
-                compilation.assets[name].source = () => {
-                    return this.setting.minify ? minify(source, {
-                        collapseWhitespace: true,
-                        minifyCSS: true,
-                        minifyJS: true
-                    }) : source
-                }
-
-                reject(errResult)
+                return results
             })
-            .catch((err) => {
-                reject(err)
+            .catch(err => {
+                console.log('ERROR: ', err)
             })
-
-        })
-
     }
 
 
@@ -152,7 +92,7 @@ class SSICompileWebpackplugin{
         const source = compilation.assets
 
         Object.keys(source).forEach((item, index, array) => {
-            let extReg = new RegExp(this.setting.ext, 'g')
+            let extReg = new RegExp(this.userOptions.ext, 'g')
             if(extReg.test(item)){
 
                 htmlName.push(item)
