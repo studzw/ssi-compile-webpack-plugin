@@ -19,16 +19,16 @@ class SSICompileWebpackplugin{
 
     /**
      * Creates an instance of SSICompileWebpackplugin.
-     * 
+     *
      * @param {String} publicPath 资源基础路径,为空时不处理路径，不为空的时将拼接路径的`${publicPath}/${path.basename}`
      * @param {String} localBaseDir ssi本地路径的基础路径前缀
      * @param {String} ext 需要处理的后缀名，多个后缀可使用`|`分割
      * @param {Boolean} minify true压缩, false不压缩
-     * 
+     *
      * @memberOf SSICompileWebpackplugin
      */
     constructor(options){
-
+        this.userOptions = options || {}
         this.setting = Object.assign({}, {
             publicPath: '',
             localBaseDir: '/',
@@ -37,46 +37,64 @@ class SSICompileWebpackplugin{
         }, options)
     }
 
+    // apply(compile, callback){
 
-    apply(compile, callback){
+    //     compile.plugin('emit',  (compilation, callback) => {
 
-        compile.plugin('emit',  (compilation, callback) => {
+    //         const htmlNameArr = this.addFileToWebpackAsset(compilation)
 
-            const htmlNameArr = this.addFileToWebpackAsset(compilation)
+    //         if(htmlNameArr.length === 0){
+    //             return callback()
+    //         }
 
-            if(htmlNameArr.length === 0){
-                return callback()
-            }
-
-            eachPromise(htmlNameArr.map((item) => {
-                return this.replaceSSIFile(compilation, item)
-            }))
-            .then(() => {
-                callback()
-            }, () => {
-                callback()
-            })
-            .catch(() => {
-                throw new Error('ssi资源替换出错')
-            })
-
-            
+    //         eachPromise(htmlNameArr.map((item) => {
+    //             return this.replaceSSIFile(compilation, item)
+    //         }))
+    //         .then(() => {
+    //             callback()
+    //         }, () => {
+    //             callback()
+    //         })
+    //         .catch(() => {
+    //             throw new Error('ssi资源替换出错')
+    //         })
 
 
+
+
+    //     })
+
+    // }
+
+    apply(compiler) {
+        const pluginName = 'SSICompileWebpackPlugin';
+        const { webpack } = compiler;
+        const { Compilation, sources: { RawSource } } = webpack;
+
+        compiler.hooks.emit.tap(pluginName, (compilation) => {
+            // console.log('COMPILATION: ', compilation.assets);
+
+            const htmlArray = this.addFileToWebpackAsset(compilation);
+
+            Promise.all(htmlArray.map((filename) => this.replaceSSIFile(compilation, filename)))
+
+            // const content = Object.entries(compilation.assets)
+            //     .map(([filename, source]) => this.injectFile(filename, source, RawSource, compilation))
+
+            // return Promise.all(content)
+            //     .then((results) => console.log('RESULTS: ', results))
         })
-
     }
 
-
     replaceSSIFile(compilation, name){
-        const includeFileReg = /<!--#\s*include\s+(file|virtual)=(['"])([^\r\n\s]+?)\2\s*(.*)-->/g
+        const includeFileReg = /<!--#\s*include\s+(file|virtual)=(.*?)-->/g
         let source = compilation.assets[name].source()
         const fileArr = source.match(includeFileReg)
 
         if(!fileArr){
             Promise.resolve(source)
         }
-        
+
         return new Promise((resolve, reject) => {
 
 
@@ -138,7 +156,7 @@ class SSICompileWebpackplugin{
             if(extReg.test(item)){
 
                 htmlName.push(item)
-                compilation.fileDependencies.push(item)
+                compilation.fileDependencies.add(item)
 
                 const str = source[item].source()
                 compilation.assets[item] = {
