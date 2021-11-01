@@ -13,40 +13,40 @@ function checkStatus(res) {
 }
 
 /**
- * 获取ssi资源内容
+ * Get SSI resource
  *
- * @param {String} dir 路径
- * @param {Object} setting 设置，主要使用localBaseDir和publicPath
- * @returns {Promise}  resolve(解析dir得到的资源) reject(错误状态码||异常信息栈)
+ * @param {String} source source of the SSI resource, from the file/virtual attribute
+ * @param {Object} options options passed in from initialization of the plugin
+ * @returns {Promise} resolve(body obtained from resource) reject(error status code/information stack)
  */
 
-async function getSource(dir, setting){
+async function getSource(source, options){
   const isRemotePath = /https?\:\/\//g.test(dir)
-  const context = setting.localBaseDir
-  const publicPath = setting.publicPath.trim()
+  const context = options.localBaseDir
+  const publicPath = options.publicPath.trim()
 
   if(publicPath !== ''){
-    return Promise.resolve(`<!--#include file="${publicPath}/${path.basename(dir)}"-->`)
+    return Promise.resolve(`<!--#include file="${publicPath}/${path.basename(source)}"-->`)
   }
 
   if(isRemotePath){
-    return fetch(dir, {
+    return fetch(source, {
       compress: true,
       timeout: 5000,
     })
       .then(checkStatus)
       .then(res => res.text())
-  } else {
-    return new Promise((resolve, reject) => {
-      try{
-        const absolutePath = path.normalize(context ? path.join(context, dir) : dir)
-        const body = fs.readFileSync(absolutePath).toString()
-        resolve(body)
-      }catch(e){
-        reject(e)
-      }
-    })
   }
+
+  return new Promise((resolve, reject) => {
+    try{
+      const absolutePath = path.normalize(context ? path.join(context, source) : source)
+      const body = fs.readFileSync(absolutePath).toString()
+      resolve(body)
+    }catch(e){
+      reject(e)
+    }
+  })
 }
 
 module.exports = getSource
