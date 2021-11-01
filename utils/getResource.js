@@ -23,14 +23,17 @@ function checkStatus(res) {
 async function getResource(source, options){
   const isRemotePath = /https?\:\/\//g.test(source)
   const context = options.localBaseDir
-  const publicPath = options.publicPath.trim()
+  const remoteBasePath = options.remoteBasePath
+  const publicPath = options.publicPath?.trim()
 
   if(publicPath !== ''){
     return Promise.resolve(`<!--#include file="${publicPath}/${path.basename(source)}"-->`)
   }
 
-  if(isRemotePath){
-    return fetch(source, {
+  if(isRemotePath || remoteBasePath){
+    const url = remoteBasePath ? `${remoteBasePath}/${source}` : source;
+
+    return fetch(url, {
       compress: true,
       timeout: 5000,
     })

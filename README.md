@@ -49,3 +49,4 @@ module.exports = {
 | localBaseDir | String | '/' | Base directory for local files to be processed |
 | minify | Boolean | false | Whether or not to compress HTML |
 | publicPath | String | '' | Resource base path. If it is empty, the path will not be processed. If it is not empty, the path will be spliced into `${publicPath}/${path.basename}`|
+| remoteBasePath | String | '' | The base URL of a remote resource. If this parameter is passed, the plugin will resolve all resources through the URL by default.

@@ -18,16 +18,18 @@ class SSICompileWebpackplugin{
 	 */
 	constructor(options){
 		this.userOptions = options || {}
-		this.setting = Object.assign({}, {
-			publicPath: '',
-			localBaseDir: '/',
-			ext: '.html',
-			minify: false
-		}, options)
 	}
 
 	apply(compiler) {
 		const pluginName = 'SSICompileWebpackPlugin';
+		const defaultOptions = {
+			publicPath: '',
+			localBaseDir: '/',
+			ext: '.html',
+			minify: false,
+			remoteBasePath: undefined,
+		}
+		this.options = Object.assign(defaultOptions, this.userOptions)
 
 		compiler.hooks.emit.tapPromise(pluginName, (compilation) => {
 			const htmlArray = this.addFileToWebpackAsset(compilation);
@@ -42,7 +44,7 @@ class SSICompileWebpackplugin{
 		const source = compilation.assets
 
 		Object.keys(source).forEach((item) => {
-			let extReg = new RegExp(this.userOptions.ext, 'g')
+			let extReg = new RegExp(this.options.ext, 'g')
 			if (extReg.test(item)) {
 				htmlName.push(item)
 				compilation.fileDependencies.add(item)
@@ -73,7 +75,7 @@ class SSICompileWebpackplugin{
 
 		const getResourceForMatchingTags = includeTags.map((item) => {
 			const src = item.split('"')[1]
-			return getResource(src, this.userOptions)
+			return getResource(src, this.options)
 		})
 
 		return Promise.all(getResourceForMatchingTags)
@@ -94,7 +96,7 @@ class SSICompileWebpackplugin{
 
 	overwriteComplication(compilation, source, filename) {
 		compilation.assets[filename].source = () => {
-			return this.userOptions.minify ? minify(source, {
+			return this.options.minify ? minify(source, {
 				collapseWhitespace: true,
 				minifyCSS: true,
 				minifyJS: true
