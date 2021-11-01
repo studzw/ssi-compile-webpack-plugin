@@ -3,29 +3,18 @@
 const path = require('path')
 const minify = require('html-minifier').minify
 const getSource = require('./utils/get-source.js')
-const eachPromise = require('./utils/each-promise.js')
-
-
-
 
 /**
  * @class SSICompileWebpackplugin
- * ssi资源路径替换策略
- * 解析file路径 => 判断是否为线上资源
- * 线上资源 => http => 组合页面
- * 本地资源 => 解析路径 => fs => 组合页面
+ * Replaces file/virtual tags in .*html files with online or local resources
  */
 class SSICompileWebpackplugin{
-
     /**
      * Creates an instance of SSICompileWebpackplugin.
-     *
-     * @param {String} publicPath 资源基础路径,为空时不处理路径，不为空的时将拼接路径的`${publicPath}/${path.basename}`
-     * @param {String} localBaseDir ssi本地路径的基础路径前缀
-     * @param {String} ext 需要处理的后缀名，多个后缀可使用`|`分割
-     * @param {Boolean} minify true压缩, false不压缩
-     *
-     * @memberOf SSICompileWebpackplugin
+     * @param {String} publicPath Resource base path. If it is empty, the path will not be processed. If it is not empty, the path will be spliced into `${publicPath}/${path.basename}`
+     * @param {String} localBaseDir base directory for local files to be processed
+     * @param {String} ext File suffix to be processed. Use '\|' to separate multiple suffixes, such as '.html\|.shtml'
+     * @param {Boolean} minify Whether or not to compress HTML
      */
     constructor(options){
         this.userOptions = options || {}
