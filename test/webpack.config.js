@@ -6,6 +6,8 @@ const glob = require('glob')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const SSICompileWebpackplugin = require('../index.js')
 
+const ENTRY = path.resolve(__dirname, '../test');
+const OUTPUT = path.resolve(__dirname, '../test/release');
 
 const htmlArr = () => {
     const html = glob.sync('./test/*.html')
@@ -18,7 +20,7 @@ const htmlArr = () => {
                 inject: true
             }))
         })
-    } 
+    }
     return array
 }
 
@@ -26,27 +28,28 @@ const htmlArr = () => {
 
 
 module.exports = {
-    entry: './test/entry.js',
+    entry: `${ENTRY}/entry.js`,
     output: {
-        path: `./test/release`,
-        filename: `test.js`
+        path: `${OUTPUT}`,
+        filename: `[name].js`
     },
     module: {
-        loaders: [
-            {	
+        rules: [
+            {
                 test: /\.html$/,
-                loader: 'html?minimize=false'
+                loader: 'html-loader',
+                options: {
+                    minimize: false,
+                }
             }
         ]
     },
+    devtool: 'source-map',
     plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
+        ...htmlArr(),
+        new SSICompileWebpackplugin({
+            localBaseDir: path.resolve(__dirname, '..'),
+            publicPath: ''
         })
-    ].concat(htmlArr(), new SSICompileWebpackplugin({
-        localBaseDir: path.resolve(__dirname, '..'),
-        publicPath: ''
-    }))
+    ],
 }
