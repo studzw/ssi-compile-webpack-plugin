@@ -21,7 +21,7 @@ function checkStatus(res) {
  */
 
 async function getSource(source, options){
-  const isRemotePath = /https?\:\/\//g.test(dir)
+  const isRemotePath = /https?\:\/\//g.test(source)
   const context = options.localBaseDir
   const publicPath = options.publicPath.trim()
 
