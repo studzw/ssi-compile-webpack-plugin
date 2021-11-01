@@ -75,16 +75,13 @@ class SSICompileWebpackplugin{
             })
     }
 
-
     addFileToWebpackAsset(compilation){
-
         const htmlName = []
         const source = compilation.assets
 
         Object.keys(source).forEach((item, index, array) => {
             let extReg = new RegExp(this.userOptions.ext, 'g')
-            if(extReg.test(item)){
-
+            if (extReg.test(item)) {
                 htmlName.push(item)
                 compilation.fileDependencies.add(item)
 
@@ -97,8 +94,6 @@ class SSICompileWebpackplugin{
                         return str.length
                     }
                 }
-
-
             }
         })
 
