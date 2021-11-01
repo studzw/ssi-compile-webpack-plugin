@@ -31,7 +31,7 @@ async function getResource(source, options){
   }
 
   if(isRemotePath || remoteBasePath){
-    const url = remoteBasePath ? `${remoteBasePath}/${source}` : source;
+    const url = remoteBasePath ? `${remoteBasePath}${source}` : source;
 
     return fetch(url, {
       compress: true,
