@@ -1,6 +1,6 @@
 {
   "name": "ssi-compile-webpack-plugin",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "compile ssi webpack plugin",
   "main": "index.js",
   "scripts": {
@@ -8,19 +8,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/studzw/ssi-compile-webpack-plugin.git"
+    "url": "git+https://github.com/leosoaivan/ssi-compile-webpack-plugin.git"
   },
   "keywords": [
     "webpack",
     "ssi",
     "plugin"
   ],
-  "author": "studzw",
+  "author": "leosoaivan",
+  "contributors": [
+    {
+      "name": "studzw",
+      "url": "https://github.com/studzw/ssi-compile-webpack-plugin"
+    }
+  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/studzw/ssi-compile-webpack-plugin/issues"
+    "url": "https://github.com/leosoaivan/ssi-compile-webpack-plugin/issues"
   },
-  "homepage": "https://github.com/studzw/ssi-compile-webpack-plugin#readme",
+  "homepage": "https://github.com/leosoaivan/ssi-compile-webpack-plugin#readme",
   "devDependencies": {
     "glob": "^7.1.1",
     "html-loader": "^3.0.0",
