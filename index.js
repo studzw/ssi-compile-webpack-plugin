@@ -2,7 +2,7 @@
 
 const path = require('path')
 const minify = require('html-minifier').minify
-const getSource = require('./utils/get-source.js')
+const getResource = require('./utils/getResource.js')
 
 /**
  * @class SSICompileWebpackplugin
@@ -28,58 +28,20 @@ class SSICompileWebpackplugin{
 
 	apply(compiler) {
 		const pluginName = 'SSICompileWebpackPlugin';
-		const { webpack } = compiler;
-		const { Compilation, sources: { RawSource } } = webpack;
 
-		compiler.hooks.emit.tapAsync(pluginName, (compilation, callback) => {
+		compiler.hooks.emit.tapPromise(pluginName, (compilation) => {
 			const htmlArray = this.addFileToWebpackAsset(compilation);
 			const contents = htmlArray.map((filename) => this.replaceSSIFile(compilation, filename))
 
-			Promise.all(contents)
-				.then(() => callback())
+		 	return Promise.all(contents)
 		})
-	}
-
-	replaceSSIFile(compilation, filename){
-		const includeTagRegExp = /<!--#\s*include\s+(file|virtual)=(.*?)-->/g
-		let source = compilation.assets[filename].source()
-		const includeTags = source.match(includeTagRegExp)
-
-		if(!includeTags){
-			return Promise.resolve(source)
-		}
-
-		return Promise.all(includeTags.map((item) => {
-			const src = item.split('"')[1]
-			return getSource(src, this.userOptions)
-		}))
-			.then((results) => {
-				includeTags.forEach((tag, index) => {
-					source = source.replace(tag, (matchItem) => (
-						decodeURIComponent(matchItem = encodeURIComponent(results[index]))
-					))
-				})
-
-				compilation.assets[filename].source = () => {
-					return this.userOptions.minify ? minify(source, {
-						collapseWhitespace: true,
-						minifyCSS: true,
-						minifyJS: true
-					}) : source
-				}
-
-				return results
-			})
-			.catch(err => {
-				console.log('ERROR: ', err)
-			})
 	}
 
 	addFileToWebpackAsset(compilation){
 		const htmlName = []
 		const source = compilation.assets
 
-		Object.keys(source).forEach((item, index, array) => {
+		Object.keys(source).forEach((item) => {
 			let extReg = new RegExp(this.userOptions.ext, 'g')
 			if (extReg.test(item)) {
 				htmlName.push(item)
@@ -98,6 +60,46 @@ class SSICompileWebpackplugin{
 		})
 
 		return htmlName
+	}
+
+	replaceSSIFile(compilation, filename){
+		const includeTagRegExp = /<!--#\s*include\s+(file|virtual)=(.*?)-->/g
+		let source = compilation.assets[filename].source()
+		const includeTags = source.match(includeTagRegExp)
+
+		if(!includeTags){
+			return Promise.resolve(source)
+		}
+
+		const getResourceForMatchingTags = includeTags.map((item) => {
+			const src = item.split('"')[1]
+			return getResource(src, this.userOptions)
+		})
+
+		return Promise.all(getResourceForMatchingTags)
+			.then((resources) => this.replaceAssetWithResource(resources, source, includeTags))
+			.then((source) => this.overwriteComplication(compilation, source, filename))
+			.catch(console.error)
+	}
+
+	replaceAssetWithResource(resources, source, includeTags){
+		includeTags.forEach((tag, index) => {
+			source = source.replace(tag, (matchItem) => (
+				decodeURIComponent(matchItem = encodeURIComponent(resources[index]))
+			))
+		})
+
+		return source
+	}
+
+	overwriteComplication(compilation, source, filename) {
+		compilation.assets[filename].source = () => {
+			return this.userOptions.minify ? minify(source, {
+				collapseWhitespace: true,
+				minifyCSS: true,
+				minifyJS: true
+			}) : source
+		}
 	}
 }
 

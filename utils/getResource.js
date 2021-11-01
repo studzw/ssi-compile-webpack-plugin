@@ -20,7 +20,7 @@ function checkStatus(res) {
  * @returns {Promise} resolve(body obtained from resource) reject(error status code/information stack)
  */
 
-async function getSource(source, options){
+async function getResource(source, options){
   const isRemotePath = /https?\:\/\//g.test(source)
   const context = options.localBaseDir
   const publicPath = options.publicPath.trim()
@@ -49,4 +49,4 @@ async function getSource(source, options){
   })
 }
 
-module.exports = getSource
+module.exports = getResource
